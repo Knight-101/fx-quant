@@ -10,6 +10,7 @@ import { TradesPanel }   from './components/TradesPanel.jsx'
 import { SignalLog }     from './components/SignalLog.jsx'
 import { PnlByPair }     from './components/PnlByPair.jsx'
 import { KillSwitch }    from './components/KillSwitch.jsx'
+import { RiskPanel }    from './components/RiskPanel.jsx'
 
 // ── Connection status pill ────────────────────────────────────────────────────
 function ConnectionStatus({ connected, lastUpdate }) {
@@ -103,7 +104,12 @@ export default function App() {
           </div>
         </div>
 
-        {/* Row 4: Signal Log (50%) + PnL by Pair (50%) */}
+        {/* Row 4: Risk Panel (full width) */}
+        <div className="flex-shrink-0" style={{ height: 260 }}>
+          <RiskPanel data={data} />
+        </div>
+
+        {/* Row 5: Signal Log (50%) + PnL by Pair (50%) */}
         <div className="grid gap-2 flex-shrink-0" style={{ gridTemplateColumns: '1fr 1fr', height: 280 }}>
           <div style={{ minHeight: 0, height: '100%' }}>
             <SignalLog data={data} />

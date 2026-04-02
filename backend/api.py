@@ -140,25 +140,66 @@ def _compute_metrics(trade_log: list[dict], initial_capital: float = 500_000.0) 
             peak     = max(peak, running)
             max_drawdown = min(max_drawdown, (running - peak) / peak)
 
-    # Sharpe — annualised from actual trade frequency
-    sharpe = 0.0
-    if len(pnls) >= 4:
+    # Trade frequency — used by Sharpe, Sortino, Calmar
+    span_days       = 1.0
+    trades_per_year = 52.0
+    if len(pnls) >= 2:
         try:
             times = sorted(
                 _parse_ts(e["timestamp"]).replace(tzinfo=None)
                 for e in closes if "timestamp" in e
             )
             if len(times) >= 2:
-                span_days = max((times[-1] - times[0]).total_seconds() / 86400, 1e-6)
+                span_days       = max((times[-1] - times[0]).total_seconds() / 86400, 1e-6)
                 trades_per_year = total_trades / (span_days / 365.25)
-            else:
-                trades_per_year = 52.0
-            mu  = statistics.mean(pnls)
-            std = statistics.stdev(pnls)
-            if std > 0:
-                sharpe = round((mu / std) * math.sqrt(trades_per_year), 2)
         except Exception:
             pass
+
+    mu  = statistics.mean(pnls) if pnls else 0.0
+    std = statistics.stdev(pnls) if len(pnls) >= 2 else 0.0
+
+    # Sharpe
+    sharpe = round((mu / std) * math.sqrt(trades_per_year), 2) if std > 0 and len(pnls) >= 4 else 0.0
+
+    # Sortino — downside deviation (returns < 0 only)
+    sortino = 0.0
+    if len(pnls) >= 4:
+        neg = [p for p in pnls if p < 0]
+        if len(neg) >= 2:
+            down_std = statistics.stdev(neg)
+            if down_std > 0:
+                sortino = round((mu / down_std) * math.sqrt(trades_per_year), 2)
+
+    # Calmar — annualised return / abs(max drawdown)
+    calmar = 0.0
+    if max_drawdown < 0 and len(pnls) >= 4:
+        ann_return = (net_pnl / initial_capital) * (365.25 / span_days)
+        calmar = round(ann_return / abs(max_drawdown), 2)
+
+    # Skewness (Fisher-Pearson, unbiased)
+    skewness = 0.0
+    n = len(pnls)
+    if n >= 3 and std > 0:
+        skewness = round(
+            (n / ((n - 1) * (n - 2))) * sum(((p - mu) / std) ** 3 for p in pnls), 3
+        )
+
+    # Excess kurtosis
+    kurtosis = 0.0
+    if n >= 4 and std > 0:
+        kurtosis = round(
+            ((n * (n + 1)) / ((n - 1) * (n - 2) * (n - 3)))
+            * sum(((p - mu) / std) ** 4 for p in pnls)
+            - (3 * (n - 1) ** 2) / ((n - 2) * (n - 3)),
+            3,
+        )
+
+    # VaR 95% — worst 5th-percentile loss (positive number = loss amount)
+    var_95 = 0.0
+    if pnls:
+        sorted_pnls = sorted(pnls)
+        idx = max(int(math.floor(0.05 * len(sorted_pnls))) - 1, 0)
+        var_95 = round(sorted_pnls[idx], 2)
 
     return {
         "total_trades":  total_trades,
@@ -167,9 +208,15 @@ def _compute_metrics(trade_log: list[dict], initial_capital: float = 500_000.0) 
         "avg_win":       round(avg_win, 2),
         "avg_loss":      round(avg_loss, 2),
         "expectancy":    round(expectancy, 2),
-        "sharpe":        round(sharpe, 2),
+        "sharpe":        sharpe,
+        "sortino":       sortino,
+        "calmar":        calmar,
+        "skewness":      skewness,
+        "kurtosis":      kurtosis,
+        "var_95":        var_95,
         "max_drawdown":  round(max_drawdown, 4),
         "profit_factor": round(profit_factor, 4),
+        "pnl_list":      pnls,
     }
 
 
