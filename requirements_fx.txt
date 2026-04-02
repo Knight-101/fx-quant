@@ -1,0 +1,33 @@
+# FX1 Strategy + Dashboard — Python dependencies
+# Install with: pip install -r requirements_fx.txt
+
+# ── Web backend ───────────────────────────────────────────────────────────────
+fastapi>=0.111.0
+uvicorn[standard]>=0.30.0
+websockets>=12.0
+aiofiles>=23.2.1
+
+# ── HTTP client (OANDA REST) ──────────────────────────────────────────────────
+requests>=2.32.0
+
+# ── Data / numerics ───────────────────────────────────────────────────────────
+pandas>=2.2.0
+numpy>=1.26.0
+pyarrow>=16.0.0
+
+# ── ML / statistics ───────────────────────────────────────────────────────────
+scikit-learn>=1.5.0
+statsmodels>=0.14.0
+hmmlearn>=0.3.2
+pykalman>=0.9.7
+
+# ── Config ────────────────────────────────────────────────────────────────────
+pyyaml>=6.0.1
+
+# ── Charts / visualisation ────────────────────────────────────────────────────
+matplotlib>=3.9.0
+plotly>=5.22.0
+dash>=2.17.0
+
+# ── Legacy Dash dashboard (kept for reference) ────────────────────────────────
+# dash is already listed above

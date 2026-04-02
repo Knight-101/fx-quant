@@ -1,0 +1,86 @@
+oanda:
+  account_id: ""
+  api_key: ""
+  environment: "practice"
+  base_url: ""
+
+instruments:
+  - "EUR_USD"
+  - "GBP_USD"
+  - "AUD_USD"
+  - "NZD_USD"
+  - "USD_CAD"
+  - "USD_CHF"
+  - "USD_JPY"
+
+usd_base_sign:
+  EUR_USD: 1
+  GBP_USD: 1
+  AUD_USD: 1
+  NZD_USD: 1
+  USD_CAD: -1
+  USD_CHF: -1
+  USD_JPY: -1
+
+data:
+  granularity: "M30"
+  bars: 65000      # ~5 years of M30 (62,400 bars); fetcher paginates automatically
+  cache_dir: "data/cache"
+
+train_fraction: 0.65  # first 65% for model training, last 35% for walk-forward test
+
+signals:
+  pca_window: 60
+  ou_window: 720
+  signal_bars: 4             # aggregate residuals over N M30 bars (4 = 2h drift)
+  z_entry_strong: 1.8
+  z_entry_weak: 1.5          # grid-proven: lower z degrades quality, 1.5 wins
+  z_stop: 2.2
+  z_tp: 0.5                  # rarely triggers (time_stop hits first) — kept for emergency
+  hawkes_window: 100
+  spread_percentile: 90
+  hawkes_refit_every: 100
+  ou_refit_every: 10
+  corr_threshold: 0.75
+  kappa_min: 0.0             # confirmed no effect; all signals already high-kappa
+  session_start_utc: 0       # UTC hour, inclusive
+  session_end_utc: 12        # grid-proven: 0-12 UTC (Asian+London open) best coverage
+
+hmm:
+  n_states: 3
+  retrain_hours: 24
+  corr_lookback: 20
+
+har_rv:
+  lags: [1, 8, 48]
+  fit_window: 2400   # ~50 days; was 480 (10 days) — more stable OLS fit on longer dataset
+
+kelly:
+  fraction: 0.25
+  max_risk_per_trade: 0.005  # 0.5% per trade; 7 concurrent = 3.5% total exposure (was 2% = 14%)
+
+execution:
+  entry_timeout_bars: 2      # bars to wait for limit fill (only used if assume_all_fills=false)
+  time_stop_bars: 6          # max hold in bars (6 bars = 3h); grid-proven best
+  assume_all_fills: true     # assume all limit orders fill (optimistic backtest)
+  macro_pairs_threshold: 3
+  spread_entry_max_multiplier: 1.5
+
+risk:
+  max_leverage: 50           # hard cap on vol-adjusted leverage per pair
+  pair_margin_cap: 200000    # margin per trade in account currency (SGD); 2×$200k=$400k deployed
+  cash_buffer: 50000         # 10% of SGD 500k account as reserve
+  vol_ref: 0.030             # lev = min(vol_ref/har_rv, max_leverage); at median har_rv→36x
+  max_units_per_trade: 50000000  # safety cap only (50M); formula drives sizing, not this
+  daily_drawdown_kill: 0.03
+  max_open_trades: 2         # sweet spot: 2 concurrent × SGD 225k deployed → ~15% ann
+  max_trades_per_pair: 1
+
+paths:
+  artifact_dir: "artifacts"
+  backtest_dir: "backtest/results"
+  model_dir: "artifacts/models"
+  dashboard_state: "artifacts/live_state.json"
+  trade_log: "artifacts/live_trades.json"
+  kill_switch: "artifacts/kill_switch.json"
+

@@ -1,0 +1,35 @@
+[Unit]
+Description=FX1 Trading Dashboard (FastAPI + OANDA)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=fx1
+WorkingDirectory=/opt/fx1
+
+# Load secrets from .env file
+EnvironmentFile=/opt/fx1/.env
+
+# Expose OANDA credentials to the process
+Environment="PYTHONPATH=/opt/fx1"
+Environment="PYTHONUNBUFFERED=1"
+
+ExecStart=/opt/fx1/venv/bin/uvicorn fx_oanda.backend.api:app \
+    --host 0.0.0.0 \
+    --port 8001 \
+    --workers 1 \
+    --log-level info
+
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=fx1
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

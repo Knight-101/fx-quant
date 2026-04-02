@@ -1,0 +1,34 @@
+{
+  "metrics": {
+    "total_trades": 117,
+    "win_rate": 0.5641025641025641,
+    "avg_win": 240.99894958980488,
+    "avg_loss": -179.22119286534587,
+    "profit_factor": 1.7402015275120486,
+    "net_pnl": 6765.649836794484,
+    "sharpe": 1.9901253801530152,
+    "max_drawdown": -0.010056854060586302,
+    "total_return": 0.0676564983679444,
+    "avg_leverage": 39.08543907507691,
+    "avg_notional": 390854.3907507693
+  },
+  "diagnostics": {
+    "adf_pvalues": {
+      "EUR_USD": 0.0,
+      "GBP_USD": 0.0,
+      "AUD_USD": 0.0,
+      "NZD_USD": 0.0,
+      "USD_CAD": 0.0,
+      "USD_CHF": 0.0,
+      "USD_JPY": 0.0
+    },
+    "hmm_state_counts": {
+      "macro": 44620,
+      "transitional": 14651,
+      "idiosyncratic": 4985
+    },
+    "train_end_time": "2024-05-29 01:30:00+00:00",
+    "train_bars": 42234,
+    "test_bars": 22742
+  }
+}
