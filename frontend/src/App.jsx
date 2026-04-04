@@ -76,7 +76,7 @@ export default function App() {
 
       {/* Scrollable content */}
       <div
-        className="flex-1 flex flex-col gap-2 p-2 overflow-y-auto"
+        className="flex-1 flex flex-col gap-3 p-3 overflow-y-auto"
         style={{ minHeight: 0 }}
       >
         {/* Row 1: Metrics bar */}
@@ -85,7 +85,7 @@ export default function App() {
         </div>
 
         {/* Row 2: Equity Curve (60%) + Regime Panel (40%) */}
-        <div className="grid gap-2 flex-shrink-0" style={{ gridTemplateColumns: '3fr 2fr', height: 280 }}>
+        <div className="grid gap-3 flex-shrink-0" style={{ gridTemplateColumns: '3fr 2fr', height: 340 }}>
           <div style={{ minHeight: 0, height: '100%' }}>
             <EquityCurve data={data} />
           </div>
@@ -95,7 +95,7 @@ export default function App() {
         </div>
 
         {/* Row 3: Pair Grid (60%) + Trades Panel (40%) */}
-        <div className="grid gap-2 flex-shrink-0" style={{ gridTemplateColumns: '3fr 2fr', height: 360 }}>
+        <div className="grid gap-3 flex-shrink-0" style={{ gridTemplateColumns: '3fr 2fr', height: 440 }}>
           <div style={{ minHeight: 0, height: '100%' }}>
             <PairGrid data={data} />
           </div>
@@ -105,12 +105,12 @@ export default function App() {
         </div>
 
         {/* Row 4: Risk Panel (full width) */}
-        <div className="flex-shrink-0" style={{ height: 260 }}>
+        <div className="flex-shrink-0" style={{ height: 360 }}>
           <RiskPanel data={data} />
         </div>
 
         {/* Row 5: Signal Log (50%) + PnL by Pair (50%) */}
-        <div className="grid gap-2 flex-shrink-0" style={{ gridTemplateColumns: '1fr 1fr', height: 280 }}>
+        <div className="grid gap-3 flex-shrink-0" style={{ gridTemplateColumns: '1fr 1fr', height: 320 }}>
           <div style={{ minHeight: 0, height: '100%' }}>
             <SignalLog data={data} />
           </div>

@@ -9,15 +9,15 @@ const FONT_CLR = '#94a3b8'
 function RiskMetric({ label, value, color, sub, hint }) {
   return (
     <div
-      className="flex flex-col gap-0.5 p-2 rounded"
+      className="flex flex-col gap-1 p-3 rounded"
       style={{ background: '#0d1122', border: '1px solid #2a3050' }}
     >
-      <span className="text-[9px] tracking-widest uppercase text-text-secondary">{label}</span>
-      <span className="text-sm font-bold tabular-nums" style={{ color: color || '#e2e8f0' }}>
+      <span className="text-[10px] tracking-widest uppercase text-text-secondary">{label}</span>
+      <span className="text-base font-bold tabular-nums" style={{ color: color || '#e2e8f0' }}>
         {value}
       </span>
-      {sub && <span className="text-[9px] text-muted">{sub}</span>}
-      {hint && <span className="text-[8px]" style={{ color: '#4a5580' }}>{hint}</span>}
+      {sub && <span className="text-[10px] text-muted">{sub}</span>}
+      {hint && <span className="text-[9px]" style={{ color: '#4a5580' }}>{hint}</span>}
     </div>
   )
 }
@@ -31,13 +31,17 @@ export function RiskPanel({ data }) {
   const metrics = data?.metrics || {}
   const pnls    = metrics.pnl_list || []
 
-  const sharpe   = metrics.sharpe       ?? null
-  const sortino  = metrics.sortino      ?? null
-  const calmar   = metrics.calmar       ?? null
-  const skewness = metrics.skewness     ?? null
-  const kurt     = metrics.kurtosis     ?? null
-  const var95    = metrics.var_95       ?? null
-  const maxDD    = metrics.max_drawdown ?? null
+  const sharpe      = metrics.sharpe        ?? null
+  const sortino     = metrics.sortino       ?? null
+  const calmar      = metrics.calmar        ?? null
+  const skewness    = metrics.skewness      ?? null
+  const kurt        = metrics.kurtosis      ?? null
+  const var95       = metrics.var_95        ?? null
+  const maxDD       = metrics.max_drawdown  ?? null
+  const profitFactor = metrics.profit_factor ?? null
+  const expectancy  = metrics.expectancy    ?? null
+  const avgWin      = metrics.avg_win       ?? null
+  const avgLoss     = metrics.avg_loss      ?? null
 
   // Skewness interpretation
   const skewHint = skewness === null ? '' :
@@ -71,11 +75,10 @@ export function RiskPanel({ data }) {
       xbins:     { size: 500 },
       hovertemplate: '%{x:,.0f} SGD: %{y} trades<extra></extra>',
     },
-    // Mean line
     {
       type: 'scatter',
       mode: 'lines',
-      x:    [metrics.expectancy ?? 0, metrics.expectancy ?? 0],
+      x:    [expectancy ?? 0, expectancy ?? 0],
       y:    [0, 10],
       line: { color: '#f59e0b', width: 1, dash: 'dot' },
       name: 'Expectancy',
@@ -137,9 +140,10 @@ export function RiskPanel({ data }) {
       </div>
 
       <div className="flex flex-1 gap-2 p-2 overflow-hidden" style={{ minHeight: 0 }}>
-        {/* Left: metrics grid */}
-        <div className="flex flex-col gap-1.5 flex-shrink-0" style={{ width: 220 }}>
-          <div className="grid grid-cols-2 gap-1.5">
+        {/* Left: metrics grid — 50% width */}
+        <div className="flex flex-col gap-2 flex-shrink-0" style={{ width: '48%' }}>
+          {/* Row 1: ratio metrics */}
+          <div className="grid grid-cols-3 gap-2">
             <RiskMetric
               label="Sharpe"
               value={fmt2(sharpe)}
@@ -158,6 +162,9 @@ export function RiskPanel({ data }) {
               color={ratioColor(calmar, 1.0)}
               hint="ann.ret / max DD"
             />
+          </div>
+          {/* Row 2: tail metrics */}
+          <div className="grid grid-cols-3 gap-2">
             <RiskMetric
               label="Max DD"
               value={`${((maxDD ?? 0) * 100).toFixed(2)}%`}
@@ -168,7 +175,7 @@ export function RiskPanel({ data }) {
               label="Skewness"
               value={skewness != null ? `${skewness >= 0 ? '+' : ''}${fmt2(skewness)}` : '—'}
               color={skewness == null ? '#6b7280' : skewness > 0 ? '#00d4aa' : '#ef4444'}
-              hint={skewHint}
+              hint={skewHint || 'return asymmetry'}
             />
             <RiskMetric
               label="Kurtosis"
@@ -177,13 +184,42 @@ export function RiskPanel({ data }) {
               hint="excess (fat tails)"
             />
           </div>
-          <RiskMetric
-            label="VaR 95%"
-            value={fmtSGD(var95)}
-            color={var95 == null ? '#6b7280' : var95 >= 0 ? '#6b7280' : '#ef4444'}
-            sub="SGD"
-            hint="worst 5th-pct trade"
-          />
+          {/* Row 3: trade quality */}
+          <div className="grid grid-cols-3 gap-2">
+            <RiskMetric
+              label="VaR 95%"
+              value={fmtSGD(var95)}
+              color={var95 == null ? '#6b7280' : var95 >= 0 ? '#6b7280' : '#ef4444'}
+              hint="worst 5th-pct trade"
+            />
+            <RiskMetric
+              label="Profit Factor"
+              value={profitFactor != null ? fmt2(profitFactor) : '—'}
+              color={ratioColor(profitFactor, 1.5)}
+              hint="gross win / gross loss"
+            />
+            <RiskMetric
+              label="Expectancy"
+              value={fmtSGD(expectancy)}
+              color={expectancy == null ? '#6b7280' : expectancy >= 0 ? '#00d4aa' : '#ef4444'}
+              hint="avg SGD per trade"
+            />
+          </div>
+          {/* Row 4: win/loss averages */}
+          <div className="grid grid-cols-2 gap-2">
+            <RiskMetric
+              label="Avg Win"
+              value={fmtSGD(avgWin)}
+              color={avgWin == null ? '#6b7280' : '#00d4aa'}
+              hint="SGD"
+            />
+            <RiskMetric
+              label="Avg Loss"
+              value={avgLoss != null ? fmtSGD(avgLoss) : '—'}
+              color={avgLoss == null ? '#6b7280' : '#ef4444'}
+              hint="SGD"
+            />
+          </div>
         </div>
 
         {/* Right: distribution chart */}

@@ -37,7 +37,13 @@ class FX1LiveTrader:
         self.executor = OANDAExecutor(self.cfg)
 
         self.kill_switch = False
-        self.trade_log: list[dict] = []
+
+        # Load existing trade log from disk so history survives restarts
+        trade_path = Path(self.cfg["paths"]["trade_log"])
+        try:
+            self.trade_log: list[dict] = json.loads(trade_path.read_text(encoding="utf-8")) if trade_path.exists() else []
+        except Exception:
+            self.trade_log = []
 
         # State cache: rebuilt every STATE_TTL_BARS bars
         self._cached_state = None

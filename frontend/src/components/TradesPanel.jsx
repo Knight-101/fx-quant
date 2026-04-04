@@ -14,7 +14,6 @@ function TabBtn({ id, active, count, onClick }) {
         color:           active ? '#2196f3' : '#6b7280',
         borderBottom:    active ? '2px solid #2196f3' : '2px solid transparent',
         background:      'transparent',
-        borderBottom:    active ? '2px solid #2196f3' : '2px solid transparent',
         cursor:          'pointer',
       }}
     >
