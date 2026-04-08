@@ -31,6 +31,26 @@ def cmd_fetch(args) -> None:
     print("Fetched and cached OANDA data.")
 
 
+def _benchmark_eurusd(state, train_end_time: pd.Timestamp) -> dict:
+    """Buy-and-hold EUR/USD over the test period as a benchmark for comparison."""
+    prices = state.prices.get("EUR_USD", pd.DataFrame())
+    if prices.empty:
+        return {}
+    test_prices = prices[prices.index > train_end_time]["close"].dropna()
+    if len(test_prices) < 2:
+        return {}
+    bnh_return = float(test_prices.iloc[-1] / test_prices.iloc[0] - 1.0)
+    daily = test_prices.resample("1D").last().dropna().pct_change().dropna()
+    bnh_sharpe = float(daily.mean() / daily.std() * (252 ** 0.5)) if daily.std() > 0 else 0.0
+    rolling_max = test_prices.cummax()
+    bnh_dd = float(((test_prices - rolling_max) / rolling_max).min())
+    return {
+        "bnh_return": round(bnh_return, 4),
+        "bnh_sharpe": round(bnh_sharpe, 4),
+        "bnh_max_drawdown": round(bnh_dd, 4),
+    }
+
+
 def cmd_backtest(args) -> None:
     cfg = load_config(args.config)
     ensure_dirs(cfg)
@@ -58,7 +78,16 @@ def cmd_backtest(args) -> None:
     result = FX1Backtester(cfg).run(test_signals, state.prices)
     run_dir = Path(cfg["paths"]["backtest_dir"]) / datetime.now(timezone.utc).strftime("run_%Y%m%d_%H%M%S")
     summary = write_backtest_artifacts(run_dir, result, test_signals, state.diagnostics)
-    print(json.dumps({"run_dir": str(run_dir), **summary["metrics"]}, indent=2))
+
+    benchmark = _benchmark_eurusd(state, train_end_time)
+    print(json.dumps({"run_dir": str(run_dir), **summary["metrics"], **benchmark}, indent=2))
+
+    if benchmark:
+        print("\n── Strategy vs Benchmark (EUR/USD Buy-and-Hold) ──────────────")
+        print(f"  Total Return:  {summary['metrics']['total_return']:+.2%}  vs  {benchmark['bnh_return']:+.2%}")
+        print(f"  Sharpe Ratio:  {summary['metrics']['sharpe']:.2f}        vs  {benchmark['bnh_sharpe']:.2f}")
+        print(f"  Max Drawdown:  {summary['metrics']['max_drawdown']:.2%}      vs  {benchmark['bnh_max_drawdown']:.2%}")
+        print("────────────────────────────────────────────────────────────────")
 
 
 def _next_bar_close(granularity_min: int = 30, buffer_sec: int = 60) -> pd.Timestamp:
@@ -93,10 +122,9 @@ def cmd_live(args) -> None:
             log.info("─── Bar %d at %s UTC ───", run_count + 1, now.strftime("%Y-%m-%d %H:%M"))
             snapshot = trader.run_bar()
             log.info(
-                "regime=%-12s  open_trades=%d  pending_orders=%d  signals=%d",
+                "regime=%-12s  open_trades=%d  signals=%d",
                 snapshot.regime,
                 len(snapshot.open_trades),
-                len(snapshot.pending_orders),
                 len(snapshot.recent_signals),
             )
             run_count += 1

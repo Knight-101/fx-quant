@@ -155,6 +155,16 @@ units       = (pair_margin × leverage) / entry_price
 
 *Capital: SGD 500,000. Sharpe annualized using actual trades/year. Backtest uses limit orders with assume_all_fills=true — live uses market orders, so execution costs are slightly different.*
 
+### Benchmark Comparison (walk-forward test period: Jul 2024 – Mar 2026)
+
+| Metric | FX1 Strategy | EUR/USD Buy-and-Hold | Risk-Free (US T-Bill) |
+|---|---|---|---|
+| Ann. Return | **+14.9%** | +4.4% | ~5.25% |
+| Sharpe Ratio | **1.87** | 0.60 | — |
+| Max Drawdown | **−4.2%** | −8.46% | — |
+
+EUR/USD B&H: 1.0735 → 1.1562 over the same 1.73-year window. FX1 delivers **3.4× the annualised return** of EUR/USD buy-and-hold, with **3× higher Sharpe** and **2× lower drawdown**.
+
 ### 5-Fold Walk-Forward Cross-Validation
 
 | Fold | Ann. Return | Sharpe | Win Rate | Profit Factor | Trades |
