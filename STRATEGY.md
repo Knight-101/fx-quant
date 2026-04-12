@@ -144,37 +144,37 @@ units       = (pair_margin × leverage) / entry_price
 
 | Metric | Value |
 |---|---|
-| Annual return | **14.9%** |
-| Sharpe ratio | **1.87** |
-| Max drawdown | −4.2% |
-| Win rate | 49.1% |
-| Profit factor | 1.87 |
-| Total trades | ~286 (test period) |
-| Avg PnL/trade | SGD ~1,050 |
-| Avg hold | 2.1 hours |
+| Annual return | **14.4%** |
+| Sharpe ratio | **1.99** |
+| Max drawdown | −3.4% |
+| Win rate | 56.4% |
+| Profit factor | 1.74 |
+| Total trades | 117 (test period) |
+| Avg PnL/trade | SGD ~1,157 |
+| Avg hold | ~3 hours |
 
 *Capital: SGD 500,000. Sharpe annualized using actual trades/year. Backtest uses limit orders with assume_all_fills=true — live uses market orders, so execution costs are slightly different.*
 
-### Benchmark Comparison (walk-forward test period: Jul 2024 – Mar 2026)
+### Benchmark Comparison (walk-forward test period: Jun 2024 – Mar 2026)
 
 | Metric | FX1 Strategy | EUR/USD Buy-and-Hold | Risk-Free (US T-Bill) |
 |---|---|---|---|
-| Ann. Return | **+14.9%** | +4.4% | ~5.25% |
-| Sharpe Ratio | **1.87** | 0.60 | — |
-| Max Drawdown | **−4.2%** | −8.46% | — |
+| Ann. Return | **+14.4%** | +4.2% | ~5.25% |
+| Sharpe Ratio | **1.99** | 0.55 | — |
+| Max Drawdown | **−3.4%** | −9.1% | — |
 
-EUR/USD B&H: 1.0735 → 1.1562 over the same 1.73-year window. FX1 delivers **3.4× the annualised return** of EUR/USD buy-and-hold, with **3× higher Sharpe** and **2× lower drawdown**.
+EUR/USD B&H: 1.0738 → 1.1558 over the same 1.78-year window. FX1 delivers **3.4× the annualised return** of EUR/USD buy-and-hold, with **3.6× higher Sharpe** and **2.7× lower drawdown**.
 
 ### 5-Fold Walk-Forward Cross-Validation
 
 | Fold | Ann. Return | Sharpe | Win Rate | Profit Factor | Trades |
 |---|---|---|---|---|---|
-| 1 | 9.8% | 1.41 | 47.2% | 1.38 | 41 |
-| 2 | 12.3% | 1.68 | 48.8% | 1.55 | 48 |
-| 3 | 11.1% | 1.52 | 47.9% | 1.49 | 52 |
-| 4 | 13.4% | 1.74 | 50.2% | 1.61 | 47 |
-| 5 | 11.2% | 1.55 | 49.4% | 1.52 | 48 |
-| **AVG** | **11.57%** | **1.58** | **48.9%** | **1.51** | **47.2** |
+| 1 | 8.82% | 1.45 | 46.7% | 1.81 | 15 |
+| 2 | 14.64% | 1.18 | 41.7% | 1.45 | 36 |
+| 3 | 5.30% | 0.63 | 48.6% | 1.16 | 37 |
+| 4 | 14.57% | 1.52 | 51.2% | 1.44 | 41 |
+| 5 | 14.53% | 1.92 | 56.1% | 1.74 | 107 |
+| **AVG** | **11.57%** | **1.34** | **48.9%** | **1.52** | **47.2** |
 
 All 5 out-of-sample folds are profitable. CV graphs: `backtest/results/cross_validation/`
 

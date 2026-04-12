@@ -96,23 +96,23 @@ A 3-state Hidden Markov Model classifies each bar as `idiosyncratic` / `transiti
 
 ## Backtest Results (Out-of-Sample)
 
-Test period: **Jul 2024 – Mar 2026** (last 35% of data, ~1.73 years)
+Test period: **Jun 2024 – Mar 2026** (last 35% of data, ~1.78 years)
 
 Benchmarks over the same period:
-- **EUR/USD Buy-and-Hold**: long 1 unit EUR/USD (1.0735 → 1.1562, +4.4% ann.)
+- **EUR/USD Buy-and-Hold**: long 1 unit EUR/USD (1.0738 → 1.1558, +4.2% ann.)
 - **Risk-Free Rate**: US 3-Month T-Bill yield ~5.25% annualised (prevailing SOFR over test period)
 
 | Metric | FX1 Strategy | EUR/USD B&H | Risk-Free (T-Bill) |
 |---|---|---|---|
-| Ann. Return | **+14.9%** | +4.4% | ~5.25% |
-| Sharpe Ratio | **1.87** | 0.60 | — |
-| Max Drawdown | **-4.2%** | -8.46% | — |
-| Win Rate | 49.1% | — | — |
-| Profit Factor | 1.87 | — | — |
-| Total Trades | ~286 | — | — |
+| Ann. Return | **+14.4%** | +4.2% | ~5.25% |
+| Sharpe Ratio | **1.99** | 0.55 | — |
+| Max Drawdown | **-3.4%** | -9.1% | — |
+| Win Rate | 56.4% | — | — |
+| Profit Factor | 1.74 | — | — |
+| Total Trades | 117 | — | — |
 | Avg Leverage | ~39× | — | — |
 
-FX1 delivers **3.4× the annualised return** of EUR/USD buy-and-hold (+14.9% vs +4.4%), with **3× higher Sharpe** and **half the drawdown**.
+FX1 delivers **3.4× the annualised return** of EUR/USD buy-and-hold (+14.4% vs +4.2%), with **3.6× higher Sharpe** and **2.7× lower drawdown**.
 
 Run the backtest yourself: `python run.py` → option `[2]`
 

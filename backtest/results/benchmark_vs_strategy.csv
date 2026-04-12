@@ -1,0 +1,9 @@
+metric,strategy,eur_usd_bnh
+ann_return_pct,14.4063,4.1922
+total_return_pct,27.0626,7.5821
+sharpe_ratio,1.99,0.5476
+max_drawdown_pct,-3.3821,-9.0926
+test_years,1.7796,1.7796
+start_date,2024-06-14,2024-06-14
+end_date,2026-03-26,2026-03-26
+initial_capital,500000.0,N/A

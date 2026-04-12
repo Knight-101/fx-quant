@@ -2,15 +2,15 @@
   "metrics": {
     "total_trades": 117,
     "win_rate": 0.5641025641025641,
-    "avg_win": 240.99894958980488,
-    "avg_loss": -179.22119286534587,
+    "avg_win": 4819.979,
+    "avg_loss": -3584.4239,
     "profit_factor": 1.7402015275120486,
-    "net_pnl": 6765.649836794484,
+    "net_pnl": 135312.9967,
     "sharpe": 1.9901253801530152,
-    "max_drawdown": -0.010056854060586302,
-    "total_return": 0.0676564983679444,
+    "max_drawdown": -0.033821,
+    "total_return": 0.270626,
     "avg_leverage": 39.08543907507691,
-    "avg_notional": 390854.3907507693
+    "avg_notional": 7817087.815
   },
   "diagnostics": {
     "adf_pvalues": {
